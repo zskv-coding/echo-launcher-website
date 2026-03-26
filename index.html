@@ -12,112 +12,661 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:#0c0d11;--bg2:#111318;--bg3:#181b23;
-      --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.04);
-      --teal:#38bdf8;--teal-soft:rgba(56,189,248,0.12);
-      --text:#dde3ed;--text2:#8892a4;--text3:#4e5769;--white:#f0f4fa;
-      --font:'GeistSans','Geist Sans',ui-sans-serif,system-ui;
-      --r:10px;--r-sm:6px;
+      --bg:         #0c0d11;
+      --bg2:        #111318;
+      --bg3:        #181b23;
+      --bg4:        #1e2130;
+      --border:     rgba(255,255,255,0.07);
+      --border2:    rgba(255,255,255,0.04);
+      --teal:       #38bdf8;
+      --teal-soft:  rgba(56,189,248,0.12);
+      --teal-glow:  rgba(56,189,248,0.18);
+      --text:       #dde3ed;
+      --text2:      #8892a4;
+      --text3:      #4e5769;
+      --white:      #f0f4fa;
+      --font: 'GeistSans', 'Geist Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --r: 10px;
+      --r-sm: 6px;
     }
 
-    body {background:var(--bg);color:var(--text);font-family:var(--font);}
+    html { scroll-behavior: smooth; }
 
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
+    }
+
+    /* NAV */
     nav {
-      position:fixed;top:0;left:0;right:0;height:56px;
-      display:flex;justify-content:space-between;align-items:center;
-      padding:0 2rem;background:rgba(12,13,17,0.82);
-      border-bottom:1px solid var(--border2);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      background: rgba(12,13,17,0.82);
+      backdrop-filter: blur(24px) saturate(1.4);
+      border-bottom: 1px solid var(--border2);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none; user-select: none;
+    }
+    .nav-logo-icon {
+      width: 26px; height: 26px; background: var(--teal);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .nav-logo-icon svg { width: 13px; height: 13px; fill: #07090d; }
+    .nav-wordmark { font-size: 0.92rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; }
+    .nav-ver {
+      font-size: 0.68rem; font-weight: 400; color: var(--text3);
+      padding: 1px 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: 100px;
+    }
+    .nav-links { display: flex; gap: 0.2rem; align-items: center; }
+    .nav-links a {
+      font-size: 0.82rem; font-weight: 400; color: var(--text2);
+      text-decoration: none; padding: 0.3rem 0.7rem;
+      border-radius: var(--r-sm); transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta {
+      background: var(--teal) !important; color: #07090d !important;
+      font-weight: 600 !important; margin-left: 0.3rem;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 8rem 1.5rem 5rem; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse, rgba(56,189,248,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.18);
+      border-radius: 100px; padding: 0.28rem 0.85rem 0.28rem 0.5rem;
+      font-size: 0.73rem; font-weight: 500; color: var(--teal); letter-spacing: 0.03em;
+      margin-bottom: 1.8rem; opacity: 0; animation: fadeUp 0.5s 0.05s forwards;
+    }
+    .badge-dot {
+      width: 18px; height: 18px; background: rgba(56,189,248,0.15);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .badge-dot::after {
+      content: ''; width: 6px; height: 6px; background: var(--teal);
+      border-radius: 50%; animation: pulse 2.5s infinite;
+    }
+    h1 {
+      font-size: clamp(2.6rem, 6.5vw, 5rem); font-weight: 700;
+      line-height: 1.06; letter-spacing: -0.035em; color: var(--white);
+      max-width: 780px; opacity: 0; animation: fadeUp 0.6s 0.15s forwards;
+    }
+    h1 .accent { color: var(--teal); }
+    .hero-sub {
+      margin-top: 1.1rem; font-size: 1rem; font-weight: 400;
+      color: var(--text2); max-width: 480px; line-height: 1.65;
+      opacity: 0; animation: fadeUp 0.6s 0.28s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 0.7rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 2.2rem; opacity: 0; animation: fadeUp 0.6s 0.4s forwards;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 0.62rem 1.4rem; border-radius: var(--r-sm);
+      font-family: var(--font); font-size: 0.88rem; font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: transform 0.12s, opacity 0.12s, box-shadow 0.18s;
+      letter-spacing: -0.01em;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: none; }
+    .btn-primary { background: var(--teal); color: #07090d; font-weight: 600; }
+    .btn-primary:hover { box-shadow: 0 4px 24px rgba(56,189,248,0.3); }
+    .btn-ghost { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.14); }
+
+    /* MOCKUP */
+    .mockup-wrap {
+      position: relative; margin-top: 3.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.55s forwards;
+      width: min(960px, 92vw);
+    }
+    .mockup-ambient {
+      position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+      width: 75%; height: 80px;
+      background: radial-gradient(ellipse, rgba(56,189,248,0.22) 0%, transparent 70%);
+      filter: blur(28px); pointer-events: none;
+    }
+    .mockup-toplight {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56,189,248,0.5) 50%, transparent);
+    }
+    .mockup-shell {
+      background: var(--bg2); border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 13px; overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(56,189,248,0.04);
     }
 
-    .nav-logo {display:flex;align-items:center;gap:8px;color:var(--white);text-decoration:none;font-weight:600}
-    .nav-links a {margin-left:10px;color:var(--text2);text-decoration:none}
-    .nav-cta {background:var(--teal);color:#000;padding:6px 12px;border-radius:6px;font-weight:600}
+    /* titlebar */
+    .titlebar {
+      display: flex; align-items: center; padding: 0 14px;
+      height: 38px; background: var(--bg2);
+      border-bottom: 1px solid var(--border2); gap: 10px; user-select: none;
+    }
+    .tb-dots { display: flex; gap: 5px; }
+    .tb-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .tb-dot-r { background: #ff5f57; box-shadow: 0 0 5px rgba(255,95,87,0.5); }
+    .tb-dot-y { background: #febc2e; box-shadow: 0 0 5px rgba(254,188,46,0.4); }
+    .tb-dot-g { background: #28c840; box-shadow: 0 0 5px rgba(40,200,64,0.4); }
+    .tb-title { flex: 1; text-align: center; font-size: 0.72rem; font-weight: 500; color: var(--text3); }
+    .tb-right { width: 48px; }
 
-    .hero {text-align:center;padding:8rem 1rem 4rem}
-    h1 {font-size:clamp(2.5rem,6vw,4.5rem);color:var(--white);line-height:1.1}
-    .accent {color:var(--teal)}
-    .hero-sub {color:var(--text2);margin-top:1rem}
+    /* app layout */
+    .app-layout { display: flex; height: 420px; }
 
-    .btn {background:var(--teal);color:#000;padding:.7rem 1.4rem;border-radius:var(--r-sm);display:inline-block;margin-top:1.5rem;text-decoration:none;font-weight:600}
+    /* SIDEBAR */
+    .app-sidebar {
+      width: 200px; flex-shrink: 0;
+      background: rgba(255,255,255,0.015);
+      border-right: 1px solid var(--border2);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-head {
+      display: flex; align-items: center; gap: 9px;
+      padding: 16px 14px 14px; border-bottom: 1px solid var(--border2);
+    }
+    .sb-icon {
+      width: 28px; height: 28px; background: var(--teal);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .sb-icon svg { width: 13px; height: 13px; fill: #07090d; }
+    .sb-name { font-size: 0.8rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; line-height: 1.2; }
+    .sb-ver  { font-size: 0.62rem; color: var(--text3); }
+    .sidebar-nav { flex: 1; padding: 8px 6px; display: flex; flex-direction: column; gap: 2px; }
+    .sb-item {
+      display: flex; align-items: center; gap: 9px; padding: 7px 10px;
+      border-radius: var(--r-sm); font-size: 0.78rem; font-weight: 500;
+      color: var(--text2); cursor: default;
+    }
+    .sb-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.7; }
+    .sb-item.active { background: rgba(56,189,248,0.1); color: var(--teal); }
+    .sb-item.active svg { opacity: 1; }
+    .sidebar-footer { padding: 10px 8px; border-top: 1px solid var(--border2); }
+    .user-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 8px; border-radius: var(--r-sm); cursor: default;
+    }
+    .user-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 700; color: white; flex-shrink: 0;
+    }
+    .user-name   { font-size: 0.75rem; font-weight: 500; color: var(--text); line-height: 1.2; }
+    .user-status { font-size: 0.62rem; color: #4ade80; }
+    .sign-out-btn {
+      width: 100%; margin-top: 6px; padding: 5px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: var(--r-sm); font-family: var(--font);
+      font-size: 0.7rem; font-weight: 500; color: var(--text3); cursor: default; text-align: center;
+    }
 
-    .mockup {margin:3rem auto;max-width:900px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg2)}
-    .mockup-header {padding:10px;border-bottom:1px solid var(--border2);font-size:.8rem;color:var(--text3);text-align:center}
-    .mockup-body {display:flex;height:320px}
-    .sidebar {width:180px;background:rgba(255,255,255,0.02);border-right:1px solid var(--border2);padding:1rem}
-    .main {flex:1;padding:1rem}
+    /* MAIN */
+    .app-main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .main-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 0; flex-shrink: 0;
+    }
+    .main-title { font-size: 1.25rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; line-height: 1; }
+    .main-sub   { font-size: 0.72rem; color: var(--text3); margin-top: 3px; }
+    .topbar-actions { display: flex; gap: 6px; align-items: center; }
+    .notif-btn {
+      width: 30px; height: 30px; background: transparent;
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; color: var(--text2); cursor: default;
+    }
+    .notif-btn svg { width: 13px; height: 13px; }
+    .action-btn {
+      padding: 5px 12px; border-radius: var(--r-sm); font-family: var(--font);
+      font-size: 0.72rem; font-weight: 500; cursor: default;
+      border: 1px solid var(--border); background: transparent; color: var(--text);
+    }
+    .action-btn.primary { background: var(--teal); color: #07090d; border-color: transparent; font-weight: 600; }
+    .instances-area { flex: 1; padding: 16px 20px; overflow: hidden; }
+    .instances-grid { display: flex; gap: 12px; flex-wrap: wrap; }
 
-    .inst {background:var(--bg3);padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid var(--border)}
+    /* instance cards */
+    .inst-card {
+      width: 155px; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px; cursor: default; position: relative; overflow: hidden;
+    }
+    .inst-card.featured { border-color: rgba(56,189,248,0.2); box-shadow: 0 0 20px rgba(56,189,248,0.05); }
+    .inst-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+    }
+    .inst-thumb { width: 46px; height: 46px; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    .inst-thumb-img {
+      width: 100%; height: 100%;
+      background: linear-gradient(145deg, #7c3aed 0%, #db2777 50%, #f97316 100%);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .inst-thumb-2 { background: linear-gradient(145deg, #0ea5e9 0%, #6366f1 100%); }
+    .inst-thumb-3 { background: linear-gradient(145deg, #10b981 0%, #0ea5e9 100%); }
+    .inst-name { font-size: 0.8rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; }
+    .inst-ver  { font-size: 0.67rem; color: var(--text3); margin-top: 1px; margin-bottom: 8px; }
+    .inst-footer { display: flex; align-items: center; justify-content: space-between; }
+    .inst-tag {
+      font-size: 0.63rem; font-weight: 500; padding: 2px 7px; border-radius: 4px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text2);
+    }
+    .inst-actions { display: flex; gap: 5px; align-items: center; }
+    .inst-btn { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: var(--text3); border-radius: 4px; }
+    .inst-btn svg { width: 11px; height: 11px; }
+    .inst-card-add {
+      width: 155px; min-height: 140px; border: 1px dashed var(--border);
+      border-radius: var(--r); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px; cursor: default; color: var(--text3);
+    }
+    .inst-card-add svg { width: 18px; height: 18px; }
+    .inst-card-add span { font-size: 0.72rem; }
 
-    section {padding:6rem 1.5rem}
-    .section-title {font-size:2rem;color:var(--white)}
-    .section-sub {color:var(--text2);margin-top:.5rem}
+    /* SHARED SECTION STYLES */
+    section { position: relative; z-index: 1; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem;
+    }
+    .section-tag::before { content: ''; display: inline-block; width: 14px; height: 1px; background: var(--teal); }
+    .section-title {
+      font-size: clamp(1.7rem, 3.5vw, 2.6rem); font-weight: 700;
+      color: var(--white); letter-spacing: -0.03em; line-height: 1.1;
+    }
+    .section-sub { color: var(--text2); font-size: 0.95rem; max-width: 500px; margin-top: 0.55rem; line-height: 1.65; }
 
-    .features {display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-top:2rem}
-    .feat {background:var(--bg2);padding:1.5rem;border:1px solid var(--border);border-radius:10px}
+    /* FEATURES */
+    #features { padding: 7rem 1.5rem; }
+    .features-inner { max-width: 1080px; margin: 0 auto; }
+    .features-head { text-align: center; margin-bottom: 3.5rem; }
+    .features-head .section-sub { margin-left: auto; margin-right: auto; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1px; background: var(--border2); border: 1px solid var(--border2);
+      border-radius: 14px; overflow: hidden;
+    }
+    .feat-card {
+      background: var(--bg2); padding: 1.8rem;
+      position: relative; overflow: hidden; transition: background 0.2s;
+    }
+    .feat-card:hover { background: var(--bg3); }
+    .feat-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 0% 100%, var(--teal-soft) 0%, transparent 50%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feat-card:hover::after { opacity: 1; }
+    .feat-icon {
+      width: 36px; height: 36px; background: var(--teal-soft);
+      border: 1px solid rgba(56,189,248,0.18); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem; color: var(--teal); position: relative; z-index: 1;
+    }
+    .feat-icon svg { width: 16px; height: 16px; }
+    .feat-card h3 { font-size: 0.9rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; margin-bottom: 0.35rem; position: relative; z-index: 1; }
+    .feat-card p { font-size: 0.82rem; color: var(--text2); line-height: 1.6; position: relative; z-index: 1; }
 
-    .download-box {max-width:600px;margin:0 auto}
-    .dl-card {display:flex;justify-content:space-between;align-items:center;background:var(--bg2);padding:1rem;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);margin-top:1rem}
+    /* DOWNLOAD */
+    #download { padding: 7rem 1.5rem; }
+    .download-inner {
+      max-width: 960px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+    }
+    .req-list { margin-top: 1.6rem; display: flex; flex-direction: column; gap: 0.55rem; }
+    .req-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text2); }
+    .req-check {
+      width: 16px; height: 16px; flex-shrink: 0;
+      background: var(--teal-soft); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: var(--teal);
+    }
+    .req-check svg { width: 9px; height: 9px; }
+    .dl-stack { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; }
+    .dl-card {
+      display: flex; align-items: center; gap: 12px; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 1rem 1.1rem; text-decoration: none;
+      transition: border-color 0.15s, background 0.15s, transform 0.12s;
+    }
+    .dl-card:hover { border-color: rgba(56,189,248,0.25); background: var(--bg3); transform: translateX(3px); }
+    .dl-icon-wrap {
+      width: 36px; height: 36px; flex-shrink: 0; background: var(--teal-soft);
+      border: 1px solid rgba(56,189,248,0.15); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; color: var(--teal);
+    }
+    .dl-icon-wrap svg { width: 16px; height: 16px; }
+    .dl-info-text { flex: 1; }
+    .dl-name { font-size: 0.85rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; }
+    .dl-meta { font-size: 0.72rem; color: var(--text3); margin-top: 1px; }
+    .dl-arrow { color: var(--text3); transition: color 0.15s, transform 0.15s; }
+    .dl-card:hover .dl-arrow { color: var(--teal); transform: translateX(2px); }
+    .dl-arrow svg { width: 14px; height: 14px; }
+    .dl-note { font-size: 0.72rem; color: var(--text3); margin-top: 0.7rem; }
 
-    footer {border-top:1px solid var(--border2);padding:2rem;text-align:center;color:var(--text3)}
+    /* CHANGELOG */
+    #changelog { padding: 7rem 1.5rem; }
+    .changelog-inner { max-width: 680px; margin: 0 auto; }
+    .changelog-head { margin-bottom: 3rem; }
+    .log-line { position: relative; padding-left: 22px; padding-bottom: 2.5rem; }
+    .log-line::before {
+      content: ''; position: absolute; top: 10px; left: 5px; bottom: 0; width: 1px;
+      background: linear-gradient(180deg, rgba(56,189,248,0.3) 0%, var(--border2) 100%);
+    }
+    .log-line:last-child::before { display: none; }
+    .log-line::after {
+      content: ''; position: absolute; top: 5px; left: 0;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--bg); border: 2px solid var(--teal);
+      box-shadow: 0 0 10px rgba(56,189,248,0.4);
+    }
+    .log-v { font-size: 0.92rem; font-weight: 700; color: var(--white); letter-spacing: -0.02em; }
+    .log-d { font-size: 0.73rem; color: var(--text3); margin-top: 2px; margin-bottom: 10px; }
+    .log-items { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .log-items li { font-size: 0.83rem; color: var(--text2); display: flex; align-items: baseline; gap: 7px; }
+    .log-items li::before { content: '–'; color: var(--teal); flex-shrink: 0; font-weight: 600; }
+    .log-items li b { color: var(--text); font-weight: 500; }
+
+    /* FOOTER */
+    footer {
+      position: relative; z-index: 1; border-top: 1px solid var(--border2);
+      padding: 1.8rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .footer-brand-icon { width: 22px; height: 22px; background: var(--teal); border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+    .footer-brand-icon svg { width: 11px; height: 11px; fill: #07090d; }
+    .footer-brand span { font-size: 0.85rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; }
+    .footer-links { display: flex; gap: 1.4rem; }
+    .footer-links a { font-size: 0.78rem; color: var(--text3); text-decoration: none; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text2); }
+    .footer-copy { font-size: 0.73rem; color: var(--text3); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+    @media (max-width: 700px) {
+      .download-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .nav-link-hide { display: none; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="#">Echo Launcher</a>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon"><svg viewBox="0 0 32 32"><polygon points="16,3 29,26 3,26"/></svg></div>
+    <span class="nav-wordmark">Echo Launcher</span>
+    <span class="nav-ver">v1.0.0</span>
+  </a>
   <div class="nav-links">
-    <a href="#features">Features</a>
+    <a href="#features" class="nav-link-hide">Features</a>
+    <a href="#download" class="nav-link-hide">Download</a>
+    <a href="#changelog" class="nav-link-hide">Changelog</a>
+    <a href="https://github.com" target="_blank" class="nav-link-hide">GitHub</a>
     <a href="#download" class="nav-cta">Download</a>
   </div>
 </nav>
 
 <section class="hero">
-  <h1>Your Minecraft instances,<br><span class="accent">professionally managed.</span></h1>
-  <p class="hero-sub">Echo Launcher is a streamlined instance manager designed for performance, clarity, and reliability.</p>
-  <a href="#download" class="btn">Download for Windows</a>
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><div class="badge-dot"></div>v1.0.0 — Now available for Windows</div>
+  <h1>Your Minecraft instances,<br><span class="accent">beautifully managed.</span></h1>
+  <p class="hero-sub">Echo is a clean, fast instance manager for Minecraft. Organize versions, mod loaders, and profiles — all in one place.</p>
+  <div class="hero-actions">
+    <a href="#download" class="btn btn-primary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download for Windows
+    </a>
+    <a href="https://github.com" target="_blank" class="btn btn-ghost">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      View on GitHub
+    </a>
+  </div>
 
-  <div class="mockup">
-    <div class="mockup-header">Echo Launcher</div>
-    <div class="mockup-body">
-      <div class="sidebar">
-        <div>Home</div>
-        <div>Mods</div>
-        <div>Settings</div>
+  <!-- POLISHED MOCKUP -->
+  <div class="mockup-wrap">
+    <div class="mockup-toplight"></div>
+    <div class="mockup-shell">
+      <div class="titlebar">
+        <div class="tb-dots">
+          <div class="tb-dot tb-dot-r"></div>
+          <div class="tb-dot tb-dot-y"></div>
+          <div class="tb-dot tb-dot-g"></div>
+        </div>
+        <div class="tb-title">Echo Launcher</div>
+        <div class="tb-right"></div>
       </div>
-      <div class="main">
-        <div class="inst">Instance 1.21.1 — Fabric</div>
-        <div class="inst">Instance 1.20.4 — Forge</div>
-        <div class="inst">Instance 1.19.4 — Quilt</div>
+      <div class="app-layout">
+        <div class="app-sidebar">
+          <div class="sidebar-head">
+            <div class="sb-icon"><svg viewBox="0 0 32 32"><polygon points="16,3 29,26 3,26"/></svg></div>
+            <div><div class="sb-name">Echo Launcher</div><div class="sb-ver">v1.0.0</div></div>
+          </div>
+          <div class="sidebar-nav">
+            <div class="sb-item active">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              Home
+            </div>
+            <div class="sb-item">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+              Mods
+            </div>
+            <div class="sb-item">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+              Settings
+            </div>
+          </div>
+          <div class="sidebar-footer">
+            <div class="user-row">
+              <div class="user-avatar">ZS</div>
+              <div><div class="user-name">zskv</div><div class="user-status">● Online</div></div>
+            </div>
+            <div class="sign-out-btn">Sign out</div>
+          </div>
+        </div>
+        <div class="app-main">
+          <div class="main-topbar">
+            <div><div class="main-title">Instances</div><div class="main-sub">Manage your Minecraft instances</div></div>
+            <div class="topbar-actions">
+              <div class="notif-btn"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+              <div class="action-btn">Import</div>
+              <div class="action-btn primary">New Instance</div>
+            </div>
+          </div>
+          <div class="instances-area">
+            <div class="instances-grid">
+              <div class="inst-card featured">
+                <div class="inst-thumb"><div class="inst-thumb-img">🧙‍♀️</div></div>
+                <div class="inst-name">1.21.11</div><div class="inst-ver">1.21.11</div>
+                <div class="inst-footer">
+                  <span class="inst-tag">Fabric</span>
+                  <div class="inst-actions">
+                    <div class="inst-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+                    <div class="inst-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div class="inst-card">
+                <div class="inst-thumb"><div class="inst-thumb-img inst-thumb-2">⚔️</div></div>
+                <div class="inst-name">1.20.4</div><div class="inst-ver">1.20.4</div>
+                <div class="inst-footer">
+                  <span class="inst-tag">Forge</span>
+                  <div class="inst-actions">
+                    <div class="inst-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+                    <div class="inst-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div class="inst-card">
+                <div class="inst-thumb"><div class="inst-thumb-img inst-thumb-3">🌿</div></div>
+                <div class="inst-name">1.19.4</div><div class="inst-ver">1.19.4</div>
+                <div class="inst-footer">
+                  <span class="inst-tag">Quilt</span>
+                  <div class="inst-actions">
+                    <div class="inst-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+                    <div class="inst-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div class="inst-card-add">
+                <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                <span>New Instance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mockup-ambient"></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-inner">
+    <div class="features-head">
+      <div class="section-tag">Why Echo</div>
+      <h2 class="section-title">Everything you need,<br>nothing you don't.</h2>
+      <p class="section-sub">Built to feel as responsive and clean as the game it launches.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>Instance Manager</h3>
+        <p>Create, organize, and launch multiple Minecraft instances from one clean dashboard. Each profile is fully isolated.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+        <h3>Mod Loader Support</h3>
+        <p>Fabric, Forge, and Quilt — all supported out of the box. Swap loaders per instance without touching config files.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <h3>Easy Import & Export</h3>
+        <p>Import existing instances or export yours to share with friends. One click, no manual file hunting.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3>Fast Launch Times</h3>
+        <p>Echo stays out of the way. Minimal overhead means you go from click to loading screen faster than ever.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3>Account Manager</h3>
+        <p>Manage multiple Minecraft accounts and switch between them instantly without re-logging every time.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Open Source</h3>
+        <p>Fully open source under a permissive license. Audit the code, contribute, or fork it — it's yours.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="features">
-  <h2 class="section-title">Features</h2>
-  <p class="section-sub">Built to provide a clean and efficient workflow.</p>
-
-  <div class="features">
-    <div class="feat"><b>Instance Management</b><br/>Create and manage multiple isolated Minecraft environments.</div>
-    <div class="feat"><b>Mod Loader Support</b><br/>Compatible with Fabric, Forge, and Quilt.</div>
-    <div class="feat"><b>Fast Launch</b><br/>Optimized for quick startup and minimal overhead.</div>
+<!-- DOWNLOAD -->
+<section id="download">
+  <div class="download-inner">
+    <div>
+      <div class="section-tag">Download</div>
+      <h2 class="section-title">Get Echo<br>Launcher</h2>
+      <p class="section-sub">Free and open-source. Available for Windows now, with more platforms on the way.</p>
+      <div class="req-list">
+        <div class="req-item"><div class="req-check"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Windows 10 or later (64-bit)</div>
+        <div class="req-item"><div class="req-check"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Java 17+ (auto-detected)</div>
+        <div class="req-item"><div class="req-check"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>A valid Minecraft account</div>
+        <div class="req-item"><div class="req-check"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>~50 MB disk space</div>
+      </div>
+    </div>
+    <div>
+      <div class="dl-stack">
+  <a href="https://github.com/yourrepo/releases/latest/download/EchoLauncher-Setup.exe" class="dl-card">
+    <div class="dl-icon-wrap"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+    <div class="dl-info-text"><div class="dl-name">Windows Installer</div><div class="dl-meta">EchoLauncher-Setup.exe · ~35 MB</div></div>
+    <div class="dl-arrow"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+  </a>
+</div>
+<p class="dl-note">Replace the download links with your actual GitHub release URLs.</p>
+    </div>
   </div>
 </section>
 
-<section id="download">
-  <div class="download-box">
-    <h2 class="section-title">Download</h2>
-    <p class="section-sub">Available exclusively for Windows.</p>
-
-    <a href="https://github.com/yourrepo/releases/latest/download/EchoLauncher-Setup.exe" class="dl-card">
-      <span>Windows Installer</span>
-      <span>Download</span>
-    </a>
+<!-- CHANGELOG -->
+<section id="changelog">
+  <div class="changelog-inner">
+    <div class="changelog-head">
+      <div class="section-tag">Changelog</div>
+      <h2 class="section-title">What's new</h2>
+    </div>
+    <div class="log-line">
+      <div class="log-v">v1.0.0</div>
+      <div class="log-d">March 2026 — Initial Release</div>
+      <ul class="log-items">
+        <li><b>Instance Manager</b> — create, edit, and delete Minecraft instances</li>
+        <li><b>Fabric support</b> — run Fabric-modded instances out of the box</li>
+        <li><b>Import / Export</b> — bring in existing instances or share yours</li>
+        <li><b>Account Manager</b> — multi-account sign-in support</li>
+        <li><b>Dark-first UI</b> — refined interface with teal accents</li>
+      </ul>
+    </div>
+    <div class="log-line">
+      <div class="log-v">v0.9.0-beta</div>
+      <div class="log-d">February 2026 — Beta</div>
+      <ul class="log-items">
+        <li>Internal beta with core instance and account features</li>
+        <li>Initial Windows build pipeline and packaging</li>
+        <li>Bug fixes and performance improvements from tester feedback</li>
+      </ul>
+    </div>
   </div>
 </section>
 
 <footer>
-  Echo Launcher — All rights reserved
+  <a class="footer-brand" href="#">
+    <div class="footer-brand-icon"><svg viewBox="0 0 32 32"><polygon points="16,3 29,26 3,26"/></svg></div>
+    <span>Echo Launcher</span>
+  </a>
+  <div class="footer-links">
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#download">Download</a>
+    <a href="#changelog">Changelog</a>
+  </div>
+  <div class="footer-copy">Built with care.</div>
 </footer>
 
 </body>
